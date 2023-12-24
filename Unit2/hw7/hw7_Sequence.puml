@@ -1,0 +1,31 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+autonumber
+
+MainClass -> InputThread: 启动输入线程
+MainClass -> waitQueue: 构建等待队列
+MainClass -> Scheduler: 启动调度器线程
+MainClass -> processingQueue:构建处理队列
+MainClass -> Elevator: 启动电梯线程
+MainClass -> ServiceTable: 构造服务表
+InputThread -> waitQueue: 加入乘客请求
+waitQueue -> Scheduler:取出乘客请求
+Scheduler -> processingQueue: 分配乘客请求
+processingQueue -> Elevator: 取出乘客请求
+Elevator -> Elevator: 执行运行
+Elevator -> ServiceTable:申请开门资源
+Elevator -> ServiceTable: 释放资源
+Elevator -> waitQueue: 将要换乘的乘客重新放入等待队列
+InputThread -> processingQueue: 构建新处理队列
+InputThread -> Elevator: 增加新电梯线程
+InputThread -> processingQueue:发送Maintain信号
+processingQueue -> Elevator: 传递Maintain信号
+Elevator -> waitQueue: 放入未处理完成的乘客
+InputThread -> waitQueue: 结束信号
+waitQueue -> Scheduler: 传递结束信号
+Scheduler -> processingQueue: 传递结束信号
+processingQueue -> Elevator: 传递结束信号
+Elevator -> Elevator: 电梯线程结束
+
+@enduml
